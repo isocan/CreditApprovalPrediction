@@ -5,6 +5,7 @@ import numpy as np
 import shap
 import altair as alt
 import zipfile
+import xgboost as xgb
 
 
 # Unzip and load the first DataFrame
@@ -17,8 +18,15 @@ with zipfile.ZipFile('X_encoded_subset.zip', 'r') as zipf2:
     with zipf2.open('X_test_encoded_subset.csv') as file2:
         encoded = pd.read_csv(file2)
         
-        
-load_xgb = pickle.load(open('xgb_model.pkl', 'rb'))
+# Load the XGBoost model from a .pkl file
+with open('xgb_model.pkl', 'rb') as model_file:
+    load_xgb = pickle.load(model_file)        
+
+
+# # Load the XGBoost model from a JSON file
+# with open('xgb_model.json', 'rb') as json_file:
+#     xgb_model = XGBClassifier()
+#     load_xgb = xgb_model.load_model(json_file)
 
 # # Load your data and process it as needed
 # # For example, load the merged DataFrame containing credit scores and features
