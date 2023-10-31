@@ -5,7 +5,6 @@ import numpy as np
 import shap
 import altair as alt
 import zipfile
-import xgboost as xgb
 
 
 # Unzip and load the first DataFrame
