@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 import numpy as np
 import shap
-import altair as alt
+# import altair as alt
 import zipfile
 import xgboost as xgb
 
@@ -103,67 +103,67 @@ shap_df = pd.DataFrame(data=shap_values, columns=features)
 # Get the top 10 absolute SHAP values with their corresponding column names
 top_10_shap = shap_df.abs().stack().sort_values(ascending=False).head(10)
 
-# # Display the top 10 absolute SHAP values with column names
-# st.write('Top 10 Absolute SHAP Values with Column Names:')
-# st.write(top_10_shap)
+# Display the top 10 absolute SHAP values with column names
+st.write('Top 10 Absolute SHAP Values with Column Names:')
+st.write(top_10_shap)
 
-# Plot local feature importance sorted
-abs_shap_values = np.abs(shap_values)
-sorted_indices = np.argsort(abs_shap_values)
-N = 10
-top_feature_indices = sorted_indices[0, -N:]
-top_feature_names = [features[i] for i in top_feature_indices]
-top_feature_shap_values = shap_values[0, top_feature_indices]
+# # Plot local feature importance sorted
+# abs_shap_values = np.abs(shap_values)
+# sorted_indices = np.argsort(abs_shap_values)
+# N = 10
+# top_feature_indices = sorted_indices[0, -N:]
+# top_feature_names = [features[i] for i in top_feature_indices]
+# top_feature_shap_values = shap_values[0, top_feature_indices]
 
-# Create a DataFrame for the top features and their SHAP values
-top_features_df = pd.DataFrame({'Feature': top_feature_names, 'SHAP Value': top_feature_shap_values})
+# # Create a DataFrame for the top features and their SHAP values
+# top_features_df = pd.DataFrame({'Feature': top_feature_names, 'SHAP Value': top_feature_shap_values})
 
-st.write("Top {} Most Important Features:".format(N))
+# st.write("Top {} Most Important Features:".format(N))
 
-# Create an Altair chart
-chart = alt.Chart(top_features_df).mark_bar().encode(
-    x='SHAP Value',
-    y=alt.Y('Feature', sort='-x'),
-    color=alt.condition(
-        alt.datum['SHAP Value'] > 0,
-        alt.value('green'),  # Color for positive SHAP values
-        alt.value('red')     # Color for negative SHAP values
-    )
-).properties(width=600, height=400)
+# # Create an Altair chart
+# chart = alt.Chart(top_features_df).mark_bar().encode(
+#     x='SHAP Value',
+#     y=alt.Y('Feature', sort='-x'),
+#     color=alt.condition(
+#         alt.datum['SHAP Value'] > 0,
+#         alt.value('green'),  # Color for positive SHAP values
+#         alt.value('red')     # Color for negative SHAP values
+#     )
+# ).properties(width=600, height=400)
 
-st.altair_chart(chart)
+# st.altair_chart(chart)
 
-# Create a dropdown to select a feature to plot
-selected_feature = st.selectbox("Select a feature to plot", top_feature_names)
+# # Create a dropdown to select a feature to plot
+# selected_feature = st.selectbox("Select a feature to plot", top_feature_names)
 
-# # Percentage of data to use (e.g., 10%)
-# data_percentage = 0.1
+# # # Percentage of data to use (e.g., 10%)
+# # data_percentage = 0.1
 
-# # Sample the non-selected client data
-# non_selected_data = df[df.index != client_id]
-# # sampled_data = non_selected_data.sample(frac=data_percentage, random_state=42)
+# # # Sample the non-selected client data
+# # non_selected_data = df[df.index != client_id]
+# # # sampled_data = non_selected_data.sample(frac=data_percentage, random_state=42)
 
-# Include the data of the selected client
-selected_client_data = test[test['SK_ID_CURR'] == client_id].iloc[:, :-1]
-# sampled_data = pd.concat([selected_client_data, sampled_data])
-# test_new = test.iloc[:, :-1]
-# Create a histogram for the selected feature
-histogram = alt.Chart(test).mark_bar().encode(
-    x=alt.X(selected_feature, bin=True),
-    y='count()',
-    color=alt.condition(
-        alt.datum['SK_ID_CURR'] == client_id,
-        alt.value('red'),  # Color for the selected client
-        alt.value('blue')  # Color for other clients
-    )
-).properties(width=600, height=400)
+# # Include the data of the selected client
+# selected_client_data = test[test['SK_ID_CURR'] == client_id].iloc[:, :-1]
+# # sampled_data = pd.concat([selected_client_data, sampled_data])
+# # test_new = test.iloc[:, :-1]
+# # Create a histogram for the selected feature
+# histogram = alt.Chart(test).mark_bar().encode(
+#     x=alt.X(selected_feature, bin=True),
+#     y='count()',
+#     color=alt.condition(
+#         alt.datum['SK_ID_CURR'] == client_id,
+#         alt.value('red'),  # Color for the selected client
+#         alt.value('blue')  # Color for other clients
+#     )
+# ).properties(width=600, height=400)
 
-# Add a vertical line to indicate the position of the selected client's data
-vertical_line = alt.Chart(selected_client_data).mark_rule(color='red').encode(
-    x=selected_feature
-)
+# # Add a vertical line to indicate the position of the selected client's data
+# vertical_line = alt.Chart(selected_client_data).mark_rule(color='red').encode(
+#     x=selected_feature
+# )
 
-st.altair_chart(histogram + vertical_line)
+# st.altair_chart(histogram + vertical_line)
 
 
 
