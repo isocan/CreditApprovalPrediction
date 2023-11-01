@@ -1,17 +1,17 @@
 import streamlit as st
 import pickle
 import pandas as pd
-import numpy as np
+# import numpy as np
 import shap
 # import altair as alt
 import zipfile
 import xgboost as xgb
 
 
-# Unzip and load the first DataFrame
-with zipfile.ZipFile('df_application_test_subset.zip', 'r') as zipf1:
-    with zipf1.open('df_application_test_subset.csv') as file1:
-        test = pd.read_csv(file1)
+# # Unzip and load the first DataFrame
+# with zipfile.ZipFile('df_application_test_subset.zip', 'r') as zipf1:
+#     with zipf1.open('df_application_test_subset.csv') as file1:
+#         test = pd.read_csv(file1)
 
 # Unzip and load the second DataFrame
 with zipfile.ZipFile('X_encoded_subset.zip', 'r') as zipf2:
@@ -32,65 +32,66 @@ with open('xgb_model.pkl', 'rb') as model_file:
 # # For example, load the merged DataFrame containing credit scores and features
 # df = pd.read_csv('total_client_data_final.csv')
 
-index_col = 'SK_ID_CURR'
+# index_col = 'SK_ID_CURR'
 
-test = test.set_index(index_col)
+# test = test.set_index(index_col)
 features = encoded.columns
 
-# Determine the minimum and maximum client IDs
-min_client_id = test.index.min()
-max_client_id = test.index.max()
+# # Determine the minimum and maximum client IDs
+# min_client_id = test.index.min()
+# max_client_id = test.index.max()
 
-st.markdown(
-    f"<h1 style='color:#001f3f'>Prévision d'Approbation de Crédit et Analyse SHAP du Profil</h1>",
-    unsafe_allow_html=True
-)
+# st.markdown(
+#     f"<h1 style='color:#001f3f'>Prévision d'Approbation de Crédit et Analyse SHAP du Profil</h1>",
+#     unsafe_allow_html=True
+# )
 
 
-# Initialize client_id and selected_score to default values
-client_id = min_client_id
-selected_score = 0.0
+# # Initialize client_id and selected_score to default values
+# client_id = min_client_id
+# selected_score = 0.0
 
-# Add a text input for the user to enter a client ID
-client_id = st.number_input(f'Entrez un numéro de client entre {min_client_id} et {max_client_id}', min_client_id, max_client_id, client_id)
+# # Add a text input for the user to enter a client ID
+# client_id = st.number_input(f'Entrez un numéro de client entre {min_client_id} et {max_client_id}', min_client_id, max_client_id, client_id)
 
-if client_id:
-    # Validate that the entered client ID is within the valid range
-    client_id = int(client_id)
-    if min_client_id <= client_id <= max_client_id:
-        # Calculate the credit score and related information here
-        selected_score = test[test.index == client_id]['Credit_score'].iloc[0]
+# if client_id:
+#     # Validate that the entered client ID is within the valid range
+#     client_id = int(client_id)
+#     if min_client_id <= client_id <= max_client_id:
+#         # Calculate the credit score and related information here
+#         selected_score = test[test.index == client_id]['Credit_score'].iloc[0]
 
-        # Calculate the normalized distance
-        threshold = 50
-        distance = selected_score - threshold
-        distance_normalisée = max(0.0, min(1.0, (distance + 100) / 200))
+#         # Calculate the normalized distance
+#         threshold = 50
+#         distance = selected_score - threshold
+#         distance_normalisée = max(0.0, min(1.0, (distance + 100) / 200))
 
-        # Define the color based on whether the score is accepted or not
-        if distance >= 0:
-            couleur = 'green'
-            étiquette = 'Accepté'
-            symbole = '✔️'
-        else:
-            couleur = 'red'
-            étiquette = 'Non Accepté'
-            symbole = '❌'
+#         # Define the color based on whether the score is accepted or not
+#         if distance >= 0:
+#             couleur = 'green'
+#             étiquette = 'Accepté'
+#             symbole = '✔️'
+#         else:
+#             couleur = 'red'
+#             étiquette = 'Non Accepté'
+#             symbole = '❌'
 
-        # Display the credit score with the color, symbol, and label
-        st.write(f"<p style='color:{couleur}'>Score de Crédit : <b>{selected_score:.2f}</b></p>", unsafe_allow_html=True)
-        st.write(f"<p style='color:{couleur}'>{symbole} {étiquette}</p>", unsafe_allow_html=True)
+#         # Display the credit score with the color, symbol, and label
+#         st.write(f"<p style='color:{couleur}'>Score de Crédit : <b>{selected_score:.2f}</b></p>", unsafe_allow_html=True)
+#         st.write(f"<p style='color:{couleur}'>{symbole} {étiquette}</p>", unsafe_allow_html=True)
 
-        st.progress(distance_normalisée)
+#         st.progress(distance_normalisée)
 
-    else:
-        st.write("Veuillez entrer un numéro de client valide dans la plage spécifiée.")
+#     else:
+#         st.write("Veuillez entrer un numéro de client valide dans la plage spécifiée.")
 
 explainer = shap.TreeExplainer(load_xgb)
 
-test = test.reset_index()
+# test = test.reset_index()
 
 # Get the data for the selected index
-selected_data = encoded[encoded.index == test[test['SK_ID_CURR'] == client_id].index.values[0]]
+# selected_data = encoded[encoded.index == test[test['SK_ID_CURR'] == client_id].index.values[0]]
+selected_data = encoded.head(1)
 selected_data = selected_data.iloc[:, :]
 
 # Calculate the credit score and feature importance
@@ -164,8 +165,3 @@ st.write(top_10_shap)
 # )
 
 # st.altair_chart(histogram + vertical_line)
-
-
-
-
-
